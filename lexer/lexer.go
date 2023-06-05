@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/klundert/interpreter/token"
+	"github.com/saidvandeklundert/interpreter/token"
 	//"token"
 )
 
