@@ -28,6 +28,7 @@ const (
 
 	EQ     = "=="
 	NOT_EQ = "!="
+
 	// Delimers
 	COMMA     = ","
 	SEMICOLON = ";"
@@ -39,12 +40,13 @@ const (
 
 	// Keywords
 	FUNCTION = "FUNCTION"
-	LET      = "LET"
-	TRUE     = "TRUE"
-	FALSE    = "FALSE"
-	IF       = "IF"
-	ELSE     = "ELSE"
-	RETURN   = "RETURN"
+
+	TRUE   = "TRUE"
+	FALSE  = "FALSE"
+	IF     = "IF"
+	ELSE   = "ELSE"
+	RETURN = "RETURN" // statement
+	LET    = "LET"    // statement
 )
 
 var keywords = map[string]TokenType{
