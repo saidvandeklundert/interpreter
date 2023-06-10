@@ -30,3 +30,7 @@ Adding a statement to the parser:
  add code to enable the parser to detect the `return` token.
 
  This interpreter has only the `let` and `return` statement.
+
+ ### Adding an integer literal"
+
+ Integer literals are expressions. The value they produce is the integer itself. 
