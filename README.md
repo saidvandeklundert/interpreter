@@ -8,6 +8,7 @@ go test ./...
 ```
 
 
+`AST`: abstract syntax tree: a tree representation of the abstract syntactic structure of text (often source code) written in a formal language. Each node of the tree denotes a construct occurring in the text. ~wikipedia
 
 Expressions produce values, statements don’t. 
 
@@ -20,6 +21,7 @@ Prefix operator: operator 'in front of' its operand: `--5`
 Postfix operator: operator 'after' its operand: `5++`
 Infix operators: operator sits in between operands: `5 * 5`
 
+Unary expressions: there is 1 operand
 Binary expression: two operands separated by 1 infix operator.
 
 Operator precedence: some operators have a 'higher 'rank' and get to go first: `2 + 5 * 5` gives 27 for that reason.
@@ -34,3 +36,10 @@ Adding a statement to the parser:
  ### Adding an integer literal"
 
  Integer literals are expressions. The value they produce is the integer itself. 
+
+
+
+
+
+ Compiler and compiler structure:
+ https://en.wikipedia.org/wiki/Compiler
