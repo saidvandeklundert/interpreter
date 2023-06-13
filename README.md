@@ -43,3 +43,7 @@ Adding a statement to the parser:
 
  Compiler and compiler structure:
  https://en.wikipedia.org/wiki/Compiler
+
+
+ https://github.com/ThePrimeagen/ts-rust-zig-deez/tree/master
+ 
