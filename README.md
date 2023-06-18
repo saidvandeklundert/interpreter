@@ -47,3 +47,5 @@ Adding a statement to the parser:
 
  https://github.com/ThePrimeagen/ts-rust-zig-deez/tree/master
  
+
+ https://norasandler.com/2017/11/29/Write-a-Compiler.html
