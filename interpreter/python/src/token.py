@@ -34,6 +34,9 @@ class TokenTypes(str, Enum):
     LT = "<"
     GT = ">"
 
+    #
+    EQ = "=="
+    NOT_EQ = "!="
     # delimeters
     COMMA = ","
     SEMICOLON = ";"

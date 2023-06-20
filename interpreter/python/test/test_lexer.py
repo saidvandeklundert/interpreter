@@ -54,7 +54,10 @@ if (5 < 10) {
     return true;
 } else {
     return false;
-}"""
+}
+
+10 == 10;
+10 != 9;"""
 
     expected = [
         (TokenTypes.LET, "let"),
@@ -122,6 +125,14 @@ if (5 < 10) {
         (TokenTypes.FALSE, "false"),
         (TokenTypes.SEMICOLON, ";"),
         (TokenTypes.RBRACE, "}"),
+        (TokenTypes.INT, "10"),
+        (TokenTypes.EQ, "=="),
+        (TokenTypes.INT, "10"),
+        (TokenTypes.SEMICOLON, ";"),
+        (TokenTypes.INT, "10"),
+        (TokenTypes.NOT_EQ, "!="),
+        (TokenTypes.INT, "9"),
+        (TokenTypes.SEMICOLON, ";"),
         (TokenTypes.EOF, None),
     ]
     lexer = Lexer.new(source_code)

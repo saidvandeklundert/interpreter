@@ -72,7 +72,13 @@ class Lexer:
 
         match tok:
             case "=":
-                tok = Token(TokenTypes.ASSIGN.value, self.char)
+                if self.peek_char() == "=":
+                    char = self.char
+                    self.read_char()
+                    tok = Token(TokenTypes.EQ.value, char + self.char)
+
+                else:
+                    tok = Token(TokenTypes.ASSIGN.value, self.char)
             case ";":
                 tok = Token(TokenTypes.SEMICOLON.value, self.char)
             case "(":
@@ -86,7 +92,12 @@ class Lexer:
             case "-":
                 tok = Token(TokenTypes.MINUS.value, self.char)
             case "!":
-                tok = Token(TokenTypes.BANG.value, self.char)
+                if self.peek_char() == "=":
+                    char = self.char
+                    self.read_char()
+                    tok = Token(TokenTypes.NOT_EQ.value, char + self.char)
+                else:
+                    tok = Token(TokenTypes.BANG.value, self.char)
             case "/":
                 tok = Token(TokenTypes.SLASH.value, self.char)
             case "*":
@@ -144,6 +155,17 @@ class Lexer:
         while self.char in [" ", "\t", "\n", "\r"]:
             LOGGER.debug("skip white space")
             self.read_char()
+
+    def peek_char(self) -> str:
+        """
+        Returns the char at the read position.
+
+        Returns an empty string if EOF is reached.
+        """
+        if self.read_position >= len(self.input):
+            return ""
+        else:
+            return self.input[self.read_position]
 
 
 def new_token(tokenType: TokenTypes, char: str) -> TokenTypes:
