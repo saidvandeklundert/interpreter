@@ -21,3 +21,13 @@
 go.work
 
 zprivate
+
+
+# python and stuff
+__pycache__/
+*.py[cod]
+*$py.class
+private
+*.exe
+*.so
+*.o

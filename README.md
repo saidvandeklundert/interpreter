@@ -1,11 +1,4 @@
-# interpreter
-Writing an interpreter in Go
-
-
-```
-go run .
-go test ./...
-```
+# Interpreters and compilers
 
 
 `AST`: abstract syntax tree: a tree representation of the abstract syntactic structure of text (often source code) written in a formal language. Each node of the tree denotes a construct occurring in the text. ~wikipedia
@@ -33,19 +26,29 @@ Adding a statement to the parser:
 
  This interpreter has only the `let` and `return` statement.
 
- ### Adding an integer literal"
-
- Integer literals are expressions. The value they produce is the integer itself. 
 
 
+Assembler and linker transform assembly into an executable.
+
+## Compiler:
+
+A compiler is a program that translates code from one language to another language. Oftentimes, what people mean when they say 'compiler' is a program that reads source code in a higher level language and then translates that to machine code or byte code.
+### Compiler stages:
+
+- Lexing: the Lexer/tokenizer turns source code into a list of tokens. 
+- Parsing: the parser transforms the list of tokens into an abstract syntax tree (AST). The root of the AST represents the entire program.
+- Code generation: traverse the AST and generate machine code (or byte code).
 
 
 
- Compiler and compiler structure:
- https://en.wikipedia.org/wiki/Compiler
+
+## Links:
+
+Compiler and compiler structure:
+https://en.wikipedia.org/wiki/Compiler
 
 
- https://github.com/ThePrimeagen/ts-rust-zig-deez/tree/master
+https://github.com/ThePrimeagen/ts-rust-zig-deez/tree/master
  
 
- https://norasandler.com/2017/11/29/Write-a-Compiler.html
+https://norasandler.com/2017/11/29/Write-a-Compiler.html
