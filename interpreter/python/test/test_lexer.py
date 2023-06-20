@@ -46,7 +46,15 @@ let ten = 10;
 let add = fn(x, y) {
 x + y;
 };
-let result = add(five, ten);"""
+let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
+
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}"""
 
     expected = [
         (TokenTypes.LET, "let"),
@@ -85,6 +93,35 @@ let result = add(five, ten);"""
         (TokenTypes.IDENT, "ten"),
         (TokenTypes.RPAREN, ")"),
         (TokenTypes.SEMICOLON, ";"),
+        (TokenTypes.BANG, "!"),
+        (TokenTypes.MINUS, "-"),
+        (TokenTypes.SLASH, "/"),
+        (TokenTypes.ASTERISK, "*"),
+        (TokenTypes.INT, "5"),
+        (TokenTypes.SEMICOLON, ";"),
+        (TokenTypes.INT, "5"),
+        (TokenTypes.LT, "<"),
+        (TokenTypes.INT, "10"),
+        (TokenTypes.GT, ">"),
+        (TokenTypes.INT, "5"),
+        (TokenTypes.SEMICOLON, ";"),
+        (TokenTypes.IF, "if"),
+        (TokenTypes.LPAREN, "("),
+        (TokenTypes.INT, "5"),
+        (TokenTypes.LT, "<"),
+        (TokenTypes.INT, "10"),
+        (TokenTypes.RPAREN, ")"),
+        (TokenTypes.LBRACE, "{"),
+        (TokenTypes.RETURN, "return"),
+        (TokenTypes.TRUE, "true"),
+        (TokenTypes.SEMICOLON, ";"),
+        (TokenTypes.RBRACE, "}"),
+        (TokenTypes.ELSE, "else"),
+        (TokenTypes.LBRACE, "{"),
+        (TokenTypes.RETURN, "return"),
+        (TokenTypes.FALSE, "false"),
+        (TokenTypes.SEMICOLON, ";"),
+        (TokenTypes.RBRACE, "}"),
         (TokenTypes.EOF, None),
     ]
     lexer = Lexer.new(source_code)

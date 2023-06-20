@@ -83,6 +83,20 @@ class Lexer:
                 tok = Token(TokenTypes.COMMA.value, self.char)
             case "+":
                 tok = Token(TokenTypes.PLUS.value, self.char)
+            case "-":
+                tok = Token(TokenTypes.MINUS.value, self.char)
+            case "!":
+                tok = Token(TokenTypes.BANG.value, self.char)
+            case "/":
+                tok = Token(TokenTypes.SLASH.value, self.char)
+            case "*":
+                tok = Token(TokenTypes.ASTERISK.value, self.char)
+            case "<":
+                tok = Token(TokenTypes.LT.value, self.char)
+            case ">":
+                tok = Token(TokenTypes.GT, self.char)
+            case ",":
+                tok = Token(TokenTypes.COMMA.value, self.char)
             case "{":
                 tok = Token(TokenTypes.LBRACE.value, self.char)
             case "}":

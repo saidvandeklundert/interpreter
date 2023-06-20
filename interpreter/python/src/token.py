@@ -25,7 +25,14 @@ class TokenTypes(str, Enum):
 
     # operators
     ASSIGN = "="
-    PLUS = "="
+    PLUS = "+"
+    MINUS = "-"
+    BANG = "!"
+    ASTERISK = "*"
+    SLASH = "/"
+
+    LT = "<"
+    GT = ">"
 
     # delimeters
     COMMA = ","
@@ -39,11 +46,21 @@ class TokenTypes(str, Enum):
     # keywords
     FUNCTION = "FUNCTION"
     LET = "LET"
+    TRUE = "TRUE"
+    FALSE = "FALSE"
+    IF = "IF"
+    ELSE = "ELSE"
+    RETURN = "RETURN"
 
 
 KEYWORDS: dict[str, TokenTypes] = {
     "fn": TokenTypes.FUNCTION,
     "let": TokenTypes.LET,
+    "true": TokenTypes.TRUE,
+    "false": TokenTypes.FALSE,
+    "if": TokenTypes.IF,
+    "else": TokenTypes.ELSE,
+    "return": TokenTypes.RETURN,
 }
 
 
