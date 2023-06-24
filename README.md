@@ -1,10 +1,13 @@
 # Interpreters and compilers
 
 
-`AST`: abstract syntax tree: a tree representation of the abstract syntactic structure of text (often source code) written in a formal language. Each node of the tree denotes a construct occurring in the text. ~wikipedia
+`AST`: abstract syntax tree: a tree representation of the abstract syntactic structure of text (often source code) written in a formal language. Each node of the tree denotes a construct occurring in the text. ~wikipedia A parser takes source code as input (tokens or text) and produces the AST.
 
-Expressions produce values, statements don’t. 
+`Expression`: produces a value, or put otherwise, expressions evaluate to a value.
 
+`Statement`: code that executes a specific instruction or tells the computer to complete a task. For instance, control statements, assignments, import statements, etc. Statements do not produce a value.
+
+`Identifiers`/`Symbols`: names for variables, types, functions, and labels in a program.
 What an expression is and what a statement is can vary from programming language to programming language.
 
 Example statement: `let x = 5;`
@@ -24,7 +27,7 @@ Adding a statement to the parser:
 - enable the parser to detect the token for the statement. For instance,
  add code to enable the parser to detect the `return` token.
 
- This interpreter has only the `let` and `return` statement.
+This interpreter has only the `let` and `return` statement.
 
 
 
@@ -43,6 +46,9 @@ A compiler is a program that translates code from one language to another langua
 
 
 ## Links:
+
+Statements vs expressions:
+https://www.baeldung.com/cs/expression-vs-statement
 
 Compiler and compiler structure:
 https://en.wikipedia.org/wiki/Compiler

@@ -3,10 +3,6 @@ from src.token import Token, TokenType, TokenTypes
 from src.lexer import Lexer
 
 
-def test_ex():
-    assert True is True
-
-
 def test_next_token_simple():
     """
     Ensure the lexer can translate source code into the proper tokens.
