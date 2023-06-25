@@ -17,6 +17,8 @@ source = """
 let x = 5;
 let y = 10;
 let foobar = 838383;
+return 5;
+5;
 """
 
 if __name__ == "__main__":
