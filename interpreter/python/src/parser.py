@@ -33,6 +33,12 @@ class Parser:
         self.infix_parse_function: dict[str, InfixParseFunction] = {}
         self.register_prefix_function(token.TokenTypes.IDENT, self.parse_identifier)
         self.register_prefix_function(token.TokenTypes.INT, self.parse_integer_literal)
+        self.register_prefix_function(
+            token.TokenTypes.BANG, self.parse_prefix_expression
+        )
+        self.register_prefix_function(
+            token.TokenTypes.MINUS, self.parse_prefix_expression
+        )
 
     @staticmethod
     def new(l: lexer.Lexer) -> Parser:
@@ -130,9 +136,14 @@ class Parser:
         LOGGER.info(f"parse_expression prefix {prefix} for {self.cur_token.Type}")
         LOGGER.info(f"{self.prefix_parse_function.keys()}")
         if prefix is None:
+            self.no_prefix_parse_function_error(self.cur_token)
             return None
         left_expression = prefix()
         return left_expression
+
+    def no_prefix_parse_function_error(self, t: token.TokenTypes) -> None:
+        message = f"no prefix parse function for {t} found"
+        self.errors.append(message)
 
     def parse_let_statement(self) -> ast.LetStatement:
         """
@@ -233,3 +244,18 @@ class Parser:
         LOGGER.info(f"parsed {value} from {self.cur_token}")
         literal_expression.value = value
         return literal_expression
+
+    def parse_prefix_expression(self) -> ast.Expression:
+        """
+        Builds a PrefixExpression node using the current token.
+
+        In order to set the 'right' attribute, it advances the token and then parses the next token
+        using 'parse_expression'. The expression that is returned by this method
+        is set as the value for the 'right' attribute.
+        """
+        expression = ast.PrefixExpression(
+            token=self.cur_token, operator=self.cur_token.Literal, right=None
+        )
+        self.next_token()
+        expression.right = self.parse_expression(Precedence.PREFIX)
+        return expression

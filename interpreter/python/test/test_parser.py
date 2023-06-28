@@ -9,6 +9,7 @@ from src.ast import (
     Identifier,
     IntegerLiteral,
     ExpressionStatement,
+    Expression,
 )
 
 PROGRAM = """
@@ -114,3 +115,25 @@ def test_integer_literal():
     assert isinstance(integer_literal, IntegerLiteral)
     assert integer_literal.token.Literal == "5"
     assert integer_literal.value == 5
+
+
+def test_parse_prefix_expression():
+    """
+    Verify that the parser can correctly parse prefix expressions.
+    """
+    program = "!5;\n-15;"
+    l: Lexer = Lexer.new(program)
+    p: Parser = Parser.new(l)
+
+    parsed_program = p.parse_program()
+    assert len(parsed_program.statements) == 2
+
+    expression_1 = parsed_program.statements[0].expression
+    assert expression_1.operator == "!"
+    assert expression_1.right.value == 5
+    assert isinstance(expression_1.right, Expression)
+
+    expression_2 = parsed_program.statements[1].expression
+    assert expression_2.operator == "-"
+    assert expression_2.right.value == 15
+    assert isinstance(expression_2.right, Expression)

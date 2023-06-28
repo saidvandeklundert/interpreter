@@ -143,3 +143,19 @@ class IntegerLiteral(Expression):
 
     def expression_node(self) -> None:
         pass
+
+
+@dataclass
+class PrefixExpression(Expression):
+    # token: Token  inherited from 'Expression' -> 'Node'
+    operator: str  # - or !
+    right: Expression | None  # the expression to the right of the operator
+
+    def expression_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def __str__(self) -> str:
+        return f"({self.operator} {self.right})"
