@@ -159,3 +159,20 @@ class PrefixExpression(Expression):
 
     def __str__(self) -> str:
         return f"({self.operator} {self.right})"
+
+
+@dataclass
+class InfixExpression(Expression):
+    # token: Token  inherited from 'Expression' -> 'Node'
+    left: Expression | None  # the expression to the left of the operator
+    operator: str  # - or !
+    right: Expression | None  # the expression to the right of the operator
+
+    def expression_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def __str__(self) -> str:
+        return f"({self.left} {self.operator} {self.right})"

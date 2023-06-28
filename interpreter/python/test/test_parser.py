@@ -10,6 +10,7 @@ from src.ast import (
     IntegerLiteral,
     ExpressionStatement,
     Expression,
+    InfixExpression,
 )
 
 PROGRAM = """
@@ -137,3 +138,30 @@ def test_parse_prefix_expression():
     assert expression_2.operator == "-"
     assert expression_2.right.value == 15
     assert isinstance(expression_2.right, Expression)
+
+
+def test_parsing_infix_expressions():
+    test_inputs = [
+        ["5 + 5;", 5, "+", 5],
+        ["5 - 5;", 5, "-", 5],
+        ["5 * 5;", 5, "*", 5],
+        ["5 / 5;", 5, "/", 5],
+        ["5 > 5;", 5, ">", 5],
+        ["5 < 5;", 5, "<", 5],
+        ["5 == 5;", 5, "==", 5],
+        ["5 != 5;", 5, "!=", 5],
+    ]
+    for test_input in test_inputs:
+        import pdb
+
+        # pdb.set_trace()
+        l: Lexer = Lexer.new(test_input[0])
+        p: Parser = Parser.new(l)
+
+        parsed_program = p.parse_program()
+        # pdb.set_trace()
+        assert len(parsed_program.statements) == 1
+        assert isinstance(parsed_program.statements[0].expression, InfixExpression)
+        assert parsed_program.statements[0].expression.left.value == test_input[1]
+        assert parsed_program.statements[0].expression.operator == test_input[2]
+        assert parsed_program.statements[0].expression.right.value == test_input[3]

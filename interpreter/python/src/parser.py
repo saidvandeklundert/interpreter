@@ -23,6 +23,18 @@ class Precedence(IntEnum):
     CALL = 7  # myFunction(X)
 
 
+PRECEDENCES: dict[token.TokenTypes, int] = {
+    token.TokenTypes.EQ: Precedence.EQUALS,
+    token.TokenTypes.NOT_EQ: Precedence.EQUALS,
+    token.TokenTypes.LT: Precedence.LESSGREATER,
+    token.TokenTypes.GT: Precedence.LESSGREATER,
+    token.TokenTypes.PLUS: Precedence.SUM,
+    token.TokenTypes.MINUS: Precedence.SUM,
+    token.TokenTypes.SLASH: Precedence.PRODUCT,
+    token.TokenTypes.ASTERISK: Precedence.PRODUCT,
+}
+
+
 class Parser:
     def __init__(self, l: lexer.Lexer):
         self.l: lexer.Lexer = l
@@ -30,7 +42,6 @@ class Parser:
         self.peek_token: token.Token | None = None
         self.errors: list[str] = []
         self.prefix_parse_function: dict[str, PrefixParseFunction] = {}
-        self.infix_parse_function: dict[str, InfixParseFunction] = {}
         self.register_prefix_function(token.TokenTypes.IDENT, self.parse_identifier)
         self.register_prefix_function(token.TokenTypes.INT, self.parse_integer_literal)
         self.register_prefix_function(
@@ -39,6 +50,24 @@ class Parser:
         self.register_prefix_function(
             token.TokenTypes.MINUS, self.parse_prefix_expression
         )
+        # register infix operators
+        self.infix_parse_function: dict[str, InfixParseFunction] = {}
+        self.register_infix_function(token.TokenTypes.PLUS, self.parse_infix_expression)
+        self.register_infix_function(
+            token.TokenTypes.MINUS, self.parse_infix_expression
+        )
+        self.register_infix_function(
+            token.TokenTypes.SLASH, self.parse_infix_expression
+        )
+        self.register_infix_function(
+            token.TokenTypes.ASTERISK, self.parse_infix_expression
+        )
+        self.register_infix_function(token.TokenTypes.EQ, self.parse_infix_expression)
+        self.register_infix_function(
+            token.TokenTypes.NOT_EQ, self.parse_infix_expression
+        )
+        self.register_infix_function(token.TokenTypes.LT, self.parse_infix_expression)
+        self.register_infix_function(token.TokenTypes.GT, self.parse_infix_expression)
 
     @staticmethod
     def new(l: lexer.Lexer) -> Parser:
@@ -127,8 +156,14 @@ class Parser:
         Parse an expression:
         - use 'self.cur_token.Type' to perform a lookup and determine what
           function to use to parse the expression
+
         - execute the function that does that actual work of parsing the expression
          and returning an 'ast.Expression'
+
+        - enter while loop that tried to find an infix parse function for the next token
+          - if that function is found, it is called passing in the previously found expression
+          - this is done again and again untill a token with a higher precedence is encountered
+
         - return the 'ast.Expression'
         """
         prefix = self.prefix_parse_function.get(self.cur_token.Type)
@@ -139,6 +174,16 @@ class Parser:
             self.no_prefix_parse_function_error(self.cur_token)
             return None
         left_expression = prefix()
+        while (
+            not self.peek_token_is(token.TokenTypes.SEMICOLON)
+            and precedence < self.peek_precedence()
+        ):
+            infix = self.infix_parse_function.get(self.peek_token.Type)
+            if infix is None:
+                return left_expression
+            self.next_token()
+            left_expression = infix(left_expression)
+
         return left_expression
 
     def no_prefix_parse_function_error(self, t: token.TokenTypes) -> None:
@@ -258,4 +303,46 @@ class Parser:
         )
         self.next_token()
         expression.right = self.parse_expression(Precedence.PREFIX)
+        return expression
+
+    def peek_precedence(self) -> int:
+        """
+        Return the precedence of the next token if there is
+        a next token.
+        """
+        if self.peek_token is None:
+            return Precedence.LOWEST
+
+        precedence = PRECEDENCES.get(self.peek_token.Type)
+        if precedence:
+            return precedence
+        else:
+            return Precedence.LOWEST
+
+    def curr_precedence(self) -> int:
+        cur_token = self.cur_token
+        if cur_token is None:
+            return Precedence.LOWEST
+
+        precedence = PRECEDENCES.get(self.cur_token.Type)
+        if precedence:
+            return precedence
+        else:
+            return Precedence.LOWEST
+
+    def parse_infix_expression(self, left_expression: ast.Expression) -> ast.Expression:
+        """
+        Takes a left expression to build an InifxExpression. The right expression
+        is retrieved by moving the token forward one step.
+        """
+        expression = ast.InfixExpression(
+            token=self.cur_token,
+            operator=self.cur_token.Literal,
+            left=left_expression,
+            right=None,
+        )
+        precedence = self.curr_precedence()
+        self.next_token()
+        expression.right = self.parse_expression(precedence=precedence)
+
         return expression
