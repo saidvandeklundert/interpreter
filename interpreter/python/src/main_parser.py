@@ -23,6 +23,7 @@ return 5;
 false;
 true == true;
 (!(true == true));
+if (x < y) { x };
 """
 
 if __name__ == "__main__":

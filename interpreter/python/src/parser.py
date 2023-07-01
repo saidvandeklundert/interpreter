@@ -52,7 +52,10 @@ class Parser:
         )
         self.register_prefix_function(token.TokenTypes.TRUE, self.parse_boolean)
         self.register_prefix_function(token.TokenTypes.FALSE, self.parse_boolean)
-        self.register_prefix_function(token.TokenTypes.LPAREN, self.parse_grouped_expression)
+        self.register_prefix_function(
+            token.TokenTypes.LPAREN, self.parse_grouped_expression
+        )
+        self.register_prefix_function(token.TokenTypes.IF, self.parse_if_expression)
         # register infix operators
         self.infix_parse_function: dict[str, InfixParseFunction] = {}
         self.register_infix_function(token.TokenTypes.PLUS, self.parse_infix_expression)
@@ -362,5 +365,39 @@ class Parser:
 
         if not self.expect_peek(token.TokenTypes.RPAREN):
             return None
-        
+
         return expression
+
+    def parse_if_expression(self) -> ast.Expression:
+        expression = ast.IfExpression(token=self.cur_token)
+
+        if not self.expect_peek(token.TokenTypes.LPAREN):
+            return None
+        self.next_token()
+        expression.condition = self.parse_expression(Precedence.LOWEST)
+
+        if not self.expect_peek(token.TokenTypes.RPAREN):
+            return None
+        if not self.expect_peek(token.TokenTypes.LBRACE):
+            return None
+        expression.consequence = self.parse_block_statement()
+
+        if self.peek_token_is(token.TokenTypes.ELSE):
+            self.next_token()
+            if not self.expect_peek(token.TokenTypes.LBRACE):
+                return None
+            expression.alternative = self.parse_block_statement()
+        return expression
+
+    def parse_block_statement(self) -> ast.BlockStatement:
+        block = ast.BlockStatement(token=self.cur_token)
+        self.next_token()
+
+        while not self.cur_token_is(token.TokenTypes.RBRACE) and not self.cur_token_is(
+            token.TokenTypes.EOF
+        ):
+            statement = self.parse_statement()
+            if statement:
+                block.statements.append(statement)
+            self.next_token()
+        return block

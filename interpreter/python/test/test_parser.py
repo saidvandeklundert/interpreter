@@ -168,3 +168,25 @@ def test_parsing_infix_expressions():
         assert parsed_program.statements[0].expression.left.value == test_input[1]
         assert parsed_program.statements[0].expression.operator == test_input[2]
         assert parsed_program.statements[0].expression.right.value == test_input[3]
+
+
+def test_if_else():
+    l: Lexer = Lexer.new("if (x < y) { x } else { y }")
+    p: Parser = Parser.new(l)
+
+    program = p.parse_program()
+
+    check_parser_error(p)
+
+    assert isinstance(program, Program)
+
+    assert len(program.statements) == 1
+    assert (
+        program.statements[0].expression.consequence.statements[0].expression.value
+        == "x"
+    )
+    assert program.statements[0].expression.alternative is not None
+    assert (
+        program.statements[0].expression.alternative.statements[0].expression.value
+        == "y"
+    )

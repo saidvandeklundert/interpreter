@@ -195,3 +195,41 @@ class Boolean(Expression):
 
     def expression_node(self) -> None:
         pass
+
+
+@dataclass
+class BlockStatement(Expression):
+    """
+    Blockstatement, enabling if/else
+    """
+
+    # token: Token  inherited from 'Expression' -> 'Node'
+    statements: list[Statement] = field(default_factory=list)
+
+    def statement_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def expression_node(self) -> None:
+        pass
+
+
+@dataclass
+class IfExpression(Expression):
+    """ """
+
+    # token: Token  inherited from 'Expression' -> 'Node'
+    condition: Expression | None = None
+    consequence: BlockStatement | None = None
+    alternative: BlockStatement | None = None
+
+    def statement_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def expression_node(self) -> None:
+        pass
