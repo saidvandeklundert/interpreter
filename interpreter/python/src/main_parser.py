@@ -19,6 +19,10 @@ let y = 10;
 let foobar = 838383;
 return 5;
 5;
+1 + 2 + 3;
+false;
+true == true;
+(!(true == true));
 """
 
 if __name__ == "__main__":

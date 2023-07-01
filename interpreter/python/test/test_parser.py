@@ -150,9 +150,12 @@ def test_parsing_infix_expressions():
         ["5 < 5;", 5, "<", 5],
         ["5 == 5;", 5, "==", 5],
         ["5 != 5;", 5, "!=", 5],
+        ["true == true;", True, "==", True],
+        ["true != false;", True, "!=", False],
+        ["false == false;", False, "==", False],
     ]
     for test_input in test_inputs:
-        import pdb
+        # import pdb
 
         # pdb.set_trace()
         l: Lexer = Lexer.new(test_input[0])

@@ -176,3 +176,22 @@ class InfixExpression(Expression):
 
     def __str__(self) -> str:
         return f"({self.left} {self.operator} {self.right})"
+
+
+@dataclass
+class Boolean(Expression):
+    """
+    The Boolean in the Monkey programming language
+    """
+
+    # token: Token  inherited from 'Expression' -> 'Node'
+    value: bool = False
+
+    def statement_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def expression_node(self) -> None:
+        pass

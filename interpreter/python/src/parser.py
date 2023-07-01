@@ -50,6 +50,9 @@ class Parser:
         self.register_prefix_function(
             token.TokenTypes.MINUS, self.parse_prefix_expression
         )
+        self.register_prefix_function(token.TokenTypes.TRUE, self.parse_boolean)
+        self.register_prefix_function(token.TokenTypes.FALSE, self.parse_boolean)
+        self.register_prefix_function(token.TokenTypes.LPAREN, self.parse_grouped_expression)
         # register infix operators
         self.infix_parse_function: dict[str, InfixParseFunction] = {}
         self.register_infix_function(token.TokenTypes.PLUS, self.parse_infix_expression)
@@ -345,4 +348,19 @@ class Parser:
         self.next_token()
         expression.right = self.parse_expression(precedence=precedence)
 
+        return expression
+
+    def parse_boolean(self) -> ast.Expression:
+        return ast.Boolean(
+            token=self.cur_token, value=self.cur_token_is(token.TokenTypes.TRUE)
+        )
+
+    def parse_grouped_expression(self) -> ast.Expression:
+        self.next_token()
+
+        expression = self.parse_expression(Precedence.LOWEST)
+
+        if not self.expect_peek(token.TokenTypes.RPAREN):
+            return None
+        
         return expression
