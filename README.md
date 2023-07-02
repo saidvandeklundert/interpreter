@@ -42,8 +42,19 @@ A compiler is a program that translates code from one language to another langua
 - Parsing: the parser transforms the list of tokens into an abstract syntax tree (AST). The root of the AST represents the entire program.
 - Code generation: traverse the AST and generate machine code (or byte code).
 
+The 6 compiler stages:
+- lexical analysis
+- semantic analysis
+- intermediate code generation
+- code optimization
+- code generation
+### Language processing system:
 
-
+- Preprocessor: macro-expansion, #include, etc.
+- Compiler: takes source code and targets an assembly language (typially described as something done in 6 phases)
+- Assembler: translates assembly code to machine code. The output is object code (an exe).
+- Linker: link all programs (such as modules) together to create a final executable
+- Loader: loads final executable into memory
 
 ## Links:
 

@@ -232,7 +232,7 @@ def test_function_parameter_parsing(source, expected):
     assert parsed_parameters == expected
 
 
-def test_function_parameter_parsing():
+def test_function_parameters():
     l: Lexer = Lexer.new("add(1, 2 * 3, 4 + 5);")
     p: Parser = Parser.new(l)
 
@@ -253,3 +253,25 @@ def test_function_parameter_parsing():
     assert expression.arguments[2].left.value == 4
     assert expression.arguments[2].operator == "+"
     assert expression.arguments[2].right.value == 5
+
+
+@pytest.mark.parametrize(
+    "source, identifier, expected",
+    [
+        ("let x = 5;", "x", 5),
+        ("let y = true;", "y", True),
+        ("let foobar = y;", "foobar", "y"),
+    ],
+)
+def test_let_statement_values(source, identifier, expected):
+    l: Lexer = Lexer.new(source)
+    p: Parser = Parser.new(l)
+    program = p.parse_program()
+    check_parser_error(p)
+    assert len(program.statements) == 1
+    statement = program.statements[0]
+    assert statement.name.value == identifier
+    assert statement.value.value == expected
+    import pdb
+
+    # pdb.set_trace()

@@ -211,18 +211,23 @@ class Parser:
         """
         statement = ast.LetStatement(token=self.cur_token)
 
-        if self.expect_peek(token.TokenTypes.IDENT) is False:
+        if not self.expect_peek(token.TokenTypes.IDENT):
             return None
 
         statement.name = ast.Identifier(
             token=self.cur_token, value=self.cur_token.Literal
         )
 
-        if self.expect_peek(token.TokenTypes.ASSIGN) is False:
+        if not self.expect_peek(token.TokenTypes.ASSIGN):
             return None
-        # skipping expressiong until we encounter a semicolon
-        while self.cur_token.Type != token.TokenTypes.SEMICOLON:
+        self.next_token()
+
+        statement.value = self.parse_expression(Precedence.LOWEST)
+        if self.peek_token_is(token.TokenTypes.SEMICOLON):
             self.next_token()
+        # skipping expressiong until we encounter a semicolon
+        # while self.cur_token.Type != token.TokenTypes.SEMICOLON:
+        #    self.next_token()
 
         return statement
 
@@ -236,8 +241,10 @@ class Parser:
         statement = ast.ReturnStatement(token=self.cur_token)
         self.next_token()
 
-        # skipping expression until we encounter a semicolon
-        while self.cur_token.Type != token.TokenTypes.SEMICOLON:
+        statement.return_value = self.parse_expression(Precedence.LOWEST)
+        # while self.cur_token.Type != token.TokenTypes.SEMICOLON:
+        #    self.next_token()
+        if self.peek_token_is(token.TokenTypes.SEMICOLON):
             self.next_token()
         return statement
 
