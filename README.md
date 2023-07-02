@@ -33,14 +33,28 @@ This interpreter has only the `let` and `return` statement.
 
 Assembler and linker transform assembly into an executable.
 
+## Tree-walking interpreter:
+
+- `Lexer`: tokenize the source code
+- `Parser`: build the AST
+- `Evaluator`: gives meaning to the AST:
+  - evaluates the AST
+  - implements the specification as to how the AST should be evaluated
+
+
+Interpreted languages can be optimized. Some examples:
+- compiling the AST to bytecode so that a virtual machine can execute the program more efficiently
+- JIT compiling certain parts of the application to machine code
+
+
 ## Compiler:
 
 A compiler is a program that translates code from one language to another language. Oftentimes, what people mean when they say 'compiler' is a program that reads source code in a higher level language and then translates that to machine code or byte code.
 ### Compiler stages:
 
-- Lexing: the Lexer/tokenizer turns source code into a list of tokens. 
-- Parsing: the parser transforms the list of tokens into an abstract syntax tree (AST). The root of the AST represents the entire program.
-- Code generation: traverse the AST and generate machine code (or byte code).
+- `Lexing`: the Lexer/tokenizer turns source code into a list of tokens. 
+- `Parsing`: the parser transforms the list of tokens into an abstract syntax tree (AST). The root of the AST represents the entire program.
+- `Code generation`: traverse the AST and generate machine code (or byte code).
 
 The 6 compiler stages:
 - lexical analysis
