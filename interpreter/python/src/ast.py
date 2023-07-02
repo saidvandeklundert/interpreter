@@ -54,6 +54,10 @@ class Program:
 
 @dataclass
 class Identifier(Expression):
+    """
+    Identifier in a program
+    """
+
     value: str
 
     def statement_node():
@@ -224,6 +228,51 @@ class IfExpression(Expression):
     condition: Expression | None = None
     consequence: BlockStatement | None = None
     alternative: BlockStatement | None = None
+
+    def statement_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def expression_node(self) -> None:
+        pass
+
+
+@dataclass
+class FunctionLiteral(Expression):
+    """
+    Representation of a function in the Monkey language.
+    """
+
+    # token: Token  inherited from 'Expression' -> 'Node'
+
+    body: BlockStatement | None = None
+    parameters: list[Identifier] = field(default_factory=list)
+
+    def statement_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def expression_node(self) -> None:
+        pass
+
+
+@dataclass
+class CallExpression(Expression):
+    """
+    Represents the calling of a function.
+    """
+
+    # token: Token  inherited from 'Expression' -> 'Node'
+
+    body: BlockStatement | None = None
+    function: Expression | None = (
+        None  # Identifier | FunctionLiteral  # identifier or FunctionLiteral
+    )
+    arguments: list[Expression] = field(default_factory=list)
 
     def statement_node():
         pass

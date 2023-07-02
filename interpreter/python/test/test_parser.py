@@ -11,6 +11,7 @@ from src.ast import (
     ExpressionStatement,
     Expression,
     InfixExpression,
+    FunctionLiteral,
 )
 
 PROGRAM = """
@@ -190,3 +191,65 @@ def test_if_else():
         program.statements[0].expression.alternative.statements[0].expression.value
         == "y"
     )
+
+
+def test_function_literal():
+    l: Lexer = Lexer.new("fn(x,y) { x + y }")
+    p: Parser = Parser.new(l)
+
+    program = p.parse_program()
+
+    check_parser_error(p)
+    assert len(program.statements) == 1
+    statement = program.statements[0]
+
+    assert isinstance(statement.expression, FunctionLiteral)
+
+    assert len(statement.expression.body.statements) == 1
+
+
+@pytest.mark.parametrize(
+    "source,expected",
+    [
+        ("fn(x) {};", ["x"]),
+        ("fn(x,y,z) {};", ["x", "y", "z"]),
+        ("fn() {};", []),
+    ],
+)
+def test_function_parameter_parsing(source, expected):
+    l: Lexer = Lexer.new(source)
+    p: Parser = Parser.new(l)
+
+    program = p.parse_program()
+    check_parser_error(p)
+
+    statement = program.statements[0]
+
+    import pdb
+
+    # pdb.set_trace()
+    parsed_parameters = [x.value for x in statement.expression.parameters]
+    assert parsed_parameters == expected
+
+
+def test_function_parameter_parsing():
+    l: Lexer = Lexer.new("add(1, 2 * 3, 4 + 5);")
+    p: Parser = Parser.new(l)
+
+    program = p.parse_program()
+    check_parser_error(p)
+    assert len(program.statements) == 1
+
+    statement = program.statements[0]
+    expression = statement.expression
+    assert len(expression.arguments) == 3
+
+    assert expression.arguments[0].value == 1
+
+    assert expression.arguments[1].left.value == 2
+    assert expression.arguments[1].operator == "*"
+    assert expression.arguments[1].right.value == 3
+
+    assert expression.arguments[2].left.value == 4
+    assert expression.arguments[2].operator == "+"
+    assert expression.arguments[2].right.value == 5
