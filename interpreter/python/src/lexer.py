@@ -130,7 +130,7 @@ class Lexer:
     def read_identifier(self) -> str:
         position = self.position
 
-        while self.is_letter(self.char):
+        while self.char and self.is_letter(self.char):
             self.read_char()
         return self.input[position : self.position]
 
@@ -141,12 +141,15 @@ class Lexer:
         return char.isalpha() or char == "_"
 
     @staticmethod
-    def is_digit(char: str) -> bool:
+    def is_digit(char: str | None) -> bool:
+        if char is None:
+            return False
         return char.isdigit()
 
     def read_number(self) -> str:
         position = self.position
-
+        LOGGER.info(f"read number self.char {self.char}")
+        print("self.char", self.char)
         while self.is_digit(self.char):
             self.read_char()
         return self.input[position : self.position]

@@ -3,6 +3,8 @@ ipython -i .\src\repl.py
 """
 from src.token import Token, TokenType, TokenTypes
 from src import lexer
+from src import parser
+from src import evaluator
 
 PROMPT = ">> "
 
@@ -14,21 +16,22 @@ def main():
     )
 
     while True:
-        line_to_tokens()
+        parse_line()
 
 
-def line_to_tokens():
+def parse_line():
     """
-    Converts a single line of text into Tokens and prints
-    the Tokens to screen.
+    Parse and evaluate a single line
     """
     line = input(PROMPT)
+
     l: lexer.Lexer = lexer.Lexer.new(line)
-    tok = Token(Type="", Literal=None)
-    while tok.Type != TokenTypes.EOF:
-        tok = l.next_token()
-        if tok != TokenTypes.EOF:
-            print(tok)
+    p: parser.Parser = parser.Parser.new(l)
+
+    program = p.parse_program()
+    result = evaluator.eval(program)
+    if result is not None:
+        print(result.inspect())
 
 
 if __name__ == "__main__":
