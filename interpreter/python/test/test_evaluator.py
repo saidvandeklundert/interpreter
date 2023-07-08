@@ -16,6 +16,7 @@ def eval_helper(source: str) -> object.Object:
 @pytest.mark.parametrize(
     "source, expected",
     [
+        ("-5", -5),
         ("5", 5),
         ("10", 10),
         ("1214315", 1214315),
@@ -28,8 +29,23 @@ def eval_helper(source: str) -> object.Object:
         ("!!true", True),
         ("!!false", False),
         ("!!5", True),
+        ("-10", -10),
+        ("5 + 5 + 5 + 5 - 10", 10),
+        ("2 * 2 * 2 * 2 * 2", 32),
+        ("-50 + 100 + -50", 0),
+        ("5 * 2 + 10", 20),
+        ("5 + 2 * 10", 25),
+        ("20 + 2 * -10", 0),
+        ("50 / 2 * 2 + 10", 60),
+        ("2 * (5 + 10)", 30),
+        ("3 * 3 * 3 + 10", 37),
+        ("3 * (3 * 3) + 10", 37),
+        ("(5 + 10 * 2 + 15 / 3) * 2 + -10", 50),
     ],
 )
 def test_integer_expression(source, expected):
     evaluated = eval_helper(source)
+    import pdb
+
+    # pdb.set_trace()
     assert evaluated.value == expected

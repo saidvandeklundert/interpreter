@@ -13,7 +13,7 @@ class Type(Enum):
 
 class Object(ABC):
     @abstractmethod
-    def object_type() -> ObjectType:
+    def object_type() -> Type:
         ...
 
     @abstractmethod
@@ -25,8 +25,9 @@ class Object(ABC):
 class Integer(Object):
     value: int
 
-    def object_type() -> ObjectType:
-        return Type.INTEGER_OBJ.value
+    @staticmethod
+    def object_type() -> Type:
+        return Type.INTEGER_OBJ
 
     def inspect(self) -> str:
         return str(self.value)
@@ -36,8 +37,9 @@ class Integer(Object):
 class Boolean(Object):
     value: bool
 
-    def object_type() -> ObjectType:
-        return Type.BOOLEAN_OBJ.value
+    @staticmethod
+    def object_type() -> Type:
+        return Type.BOOLEAN_OBJ
 
     def inspect(self) -> str:
         return str(self.value)
@@ -45,8 +47,9 @@ class Boolean(Object):
 
 @dataclass
 class Null(Object):
-    def object_type() -> ObjectType:
-        return Type.NULL_OBJ.value
+    @staticmethod
+    def object_type() -> Type:
+        return Type.NULL_OBJ
 
     def inspect(self) -> str:
         return "null"
