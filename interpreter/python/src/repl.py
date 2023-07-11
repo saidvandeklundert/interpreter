@@ -1,5 +1,6 @@
 """
 ipython -i .\src\repl.py
+ipython .\src\repl.py
 """
 from src.token import Token, TokenType, TokenTypes
 from src import lexer

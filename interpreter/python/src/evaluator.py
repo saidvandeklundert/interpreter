@@ -93,6 +93,11 @@ def eval_infix_expression(
         and right.object_type() == object.Type.INTEGER_OBJ
     ):
         return eval_integer_infix_expression(operator, left, right)
+    elif operator == "==":
+        return native_bool_to_boolean_object(left == right)
+    elif operator == "!=":
+        return native_bool_to_boolean_object(left != right)
+
     else:
         return NULL
 

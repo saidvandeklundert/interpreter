@@ -51,9 +51,18 @@ def eval_helper(source: str) -> object.Object:
         ("1 != 1", False),
         ("1 == 2", False),
         ("1 != 2", True),
+        ("true == true", True),
+        ("false == false", True),
+        ("true == false", False),
+        ("true != false", True),
+        ("false != true", True),
+        ("(1 < 2) == true", True),
+        ("(1 < 2) == false", False),
+        ("(1 > 2) == true", False),
+        ("(1 > 2) == false", True),
     ],
 )
-def test_integer_expression(source, expected):
+def test_expressions(source, expected):
     evaluated = eval_helper(source)
     import pdb
 
