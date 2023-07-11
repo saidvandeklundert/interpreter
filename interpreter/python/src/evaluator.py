@@ -111,5 +111,13 @@ def eval_integer_infix_expression(
             return object.Integer(value=left_value * right_value)
         case "/":
             return object.Integer(value=left_value / right_value)
+        case "<":
+            return native_bool_to_boolean_object(left_value < right_value)
+        case ">":
+            return native_bool_to_boolean_object(left_value > right_value)
+        case "==":
+            return native_bool_to_boolean_object(left_value == right_value)
+        case "!=":
+            return native_bool_to_boolean_object(left_value != right_value)
         case _:
             return NULL

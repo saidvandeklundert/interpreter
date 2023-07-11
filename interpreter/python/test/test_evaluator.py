@@ -41,6 +41,16 @@ def eval_helper(source: str) -> object.Object:
         ("3 * 3 * 3 + 10", 37),
         ("3 * (3 * 3) + 10", 37),
         ("(5 + 10 * 2 + 15 / 3) * 2 + -10", 50),
+        ("true", True),
+        ("false", False),
+        ("1 < 2", True),
+        ("1 > 2", False),
+        ("1 < 1", False),
+        ("1 > 1", False),
+        ("1 == 1", True),
+        ("1 != 1", False),
+        ("1 == 2", False),
+        ("1 != 2", True),
     ],
 )
 def test_integer_expression(source, expected):
