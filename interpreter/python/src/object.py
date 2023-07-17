@@ -9,6 +9,8 @@ class Type(Enum):
     INTEGER_OBJ = "INTEGER"
     BOOLEAN_OBJ = "BOOLEAN"
     NULL_OBJ = "NULL"
+    RETURN_VALUE_OBJ = "RETURN_VALUE"
+    ERROR_OBJ = "ERROR"
 
 
 class Object(ABC):
@@ -53,3 +55,15 @@ class Null(Object):
 
     def inspect(self) -> str:
         return "null"
+
+
+@dataclass
+class ReturnValue(Object):
+    value: Object
+
+    @staticmethod
+    def object_type() -> Type:
+        return Type.RETURN_VALUE_OBJ
+
+    def inspect(self) -> str:
+        return self.value.inspect()

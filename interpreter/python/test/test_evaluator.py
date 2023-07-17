@@ -60,11 +60,25 @@ def eval_helper(source: str) -> object.Object:
         ("(1 < 2) == false", False),
         ("(1 > 2) == true", False),
         ("(1 > 2) == false", True),
+        ("if (1 < 2) { 10} else { 20}", 10),
+        ("if (false) { 10}", None),
+        ("if (1) { 10}", 10),
+        ("if (1 < 2) { 10 }", 10),
+        ("if (1 > 2) { 10 }", None),
+        ("if (1 > 2) { 10 } else { 20}", 20),
+        ("if (1 < 2) { 10 } else { 20}", 10),
+        ("return 10;", 10),
+        ("return 10; 9;", 10),
+        ("return 2 * 5; 9;", 10),
+        ("9; return 2 * 5; 9;", 10),
     ],
 )
-def test_expressions(source, expected):
+def test_evaluations(source, expected):
     evaluated = eval_helper(source)
     import pdb
 
     # pdb.set_trace()
-    assert evaluated.value == expected
+    if evaluated is None:
+        assert evaluated is expected
+    else:
+        assert evaluated.value == expected
