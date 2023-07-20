@@ -1,7 +1,7 @@
 import pytest
 from src.lexer import Lexer
 from src.parser import Parser
-from src.evaluator import eval
+from src.evaluator import eval_program
 from src import object
 
 
@@ -10,7 +10,7 @@ def eval_helper(source: str) -> object.Object:
     p: Parser = Parser.new(l)
 
     program = p.parse_program()
-    return eval(program)
+    return eval_program(program)
 
 
 @pytest.mark.parametrize(
@@ -71,6 +71,10 @@ def eval_helper(source: str) -> object.Object:
         ("return 10; 9;", 10),
         ("return 2 * 5; 9;", 10),
         ("9; return 2 * 5; 9;", 10),
+        # ("let a = 5; a;", 5),
+        # ("let a = 5 * 5; a;", 25),
+        # ("let a = 5; let b = a; b;", 5),
+        # ("let a = 5; let b = a; let c = a + b + 5; c;", 15),
     ],
 )
 def test_evaluations(source, expected):
@@ -82,3 +86,50 @@ def test_evaluations(source, expected):
         assert evaluated is expected
     else:
         assert evaluated.value == expected
+
+
+@pytest.mark.parametrize(
+    "source, expected_message",
+    [
+        (
+            """
+if (10 > 1) {
+  if (10 > 1) {
+    return true + false;
+  }
+}
+
+  return 1;""",
+            "unknown operator: Type.BOOLEAN_OBJ + Type.BOOLEAN_OBJ",
+        ),
+        (
+            "if (10 > 1) { true + false; }",
+            "unknown operator: Type.BOOLEAN_OBJ + Type.BOOLEAN_OBJ",
+        ),
+        (
+            "5; true + false; 5",
+            "unknown operator: Type.BOOLEAN_OBJ + Type.BOOLEAN_OBJ",
+        ),
+        ("5 + true;", "type mismatch: Type.INTEGER_OBJ + Type.BOOLEAN_OBJ"),
+        ("5 + true;", "type mismatch: Type.INTEGER_OBJ + Type.BOOLEAN_OBJ"),
+        ("5 + true; 5;", "type mismatch: Type.INTEGER_OBJ + Type.BOOLEAN_OBJ"),
+        (
+            "-true",
+            "unknown operator: -Type.BOOLEAN_OBJ",
+        ),
+        (
+            "true + false;",
+            "unknown operator: Type.BOOLEAN_OBJ + Type.BOOLEAN_OBJ",
+        ),
+        (
+            "true + false + true + false;",
+            "unknown operator: Type.BOOLEAN_OBJ + Type.BOOLEAN_OBJ",
+        ),
+    ],
+)
+def test_error_handling(source, expected_message):
+    evaluated = eval_helper(source)
+    import pdb
+
+    # pdb.set_trace()
+    assert evaluated.message == expected_message

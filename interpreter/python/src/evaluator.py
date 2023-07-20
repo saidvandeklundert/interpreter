@@ -6,7 +6,7 @@ from src import object
 from typing import Any
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -63,11 +63,13 @@ def eval_program(program: ast.Program) -> object.Object:
     result: object.Object
     for statement in program.statements:
         result = eval(statement)
-        match type(result):
-            case object.ReturnValue:
-                return result.value
-            case object.Error:
-                return result
+        result_type = type(result)
+        LOGGER.info(f"result_type: {result_type}")
+        # print(f"result_type: {result_type}")
+        if result_type == object.ReturnValue:
+            return result.value
+        elif result_type == object.Error:
+            return result
 
     return result
 
@@ -83,6 +85,8 @@ def eval_blockstatement(block: ast.BlockStatement) -> object.Object:
                 or type(result) == object.Type.ERROR_OBJ
             ):
                 return result
+
+    return result
 
 
 def eval_statements(statements: list[ast.Statement]) -> object.Object:
@@ -120,13 +124,13 @@ def eval_prefix_expression(operator: str, right: object.Object) -> object.Object
         case "-":
             return eval_minus_prefix_operator_expression(right)
         case _:
-            return NULL
+            return new_error(f"unkown operator: {operator}{right.object_type()}")
 
 
 def eval_minus_prefix_operator_expression(right: object.Object) -> object.Object:
     LOGGER.debug(right)
     if right.object_type() != object.Type.INTEGER_OBJ:
-        return NULL
+        return new_error(f"unknown operator: -{right.object_type()}")
     value = right.value
     return object.Integer(value=-value)
 
@@ -155,13 +159,19 @@ def eval_infix_expression(
         and right.object_type() == object.Type.INTEGER_OBJ
     ):
         return eval_integer_infix_expression(operator, left, right)
+    elif left.object_type() != right.object_type():
+        return new_error(
+            f"type mismatch: {left.object_type()} {operator} {right.object_type()}"
+        )
     elif operator == "==":
         return native_bool_to_boolean_object(left == right)
     elif operator == "!=":
         return native_bool_to_boolean_object(left != right)
 
     else:
-        return NULL
+        return new_error(
+            f"unknown operator: {left.object_type()} {operator} {right.object_type()}"
+        )
 
 
 def eval_integer_infix_expression(
@@ -187,7 +197,9 @@ def eval_integer_infix_expression(
         case "!=":
             return native_bool_to_boolean_object(left_value != right_value)
         case _:
-            return NULL
+            return new_error(
+                f"unkown operator: {left.object_type()} {operator} {right.object_type()}"
+            )
 
 
 def eval_if_expression(if_expression: ast.IfExpression) -> object.Object:
@@ -196,7 +208,7 @@ def eval_if_expression(if_expression: ast.IfExpression) -> object.Object:
         return condition
     if is_truthy(condition):
         return eval(if_expression.consequence)
-    elif if_expression.alternative != None:
+    elif if_expression.alternative is not None:
         return eval(if_expression.alternative)
     else:
         return None
@@ -211,3 +223,11 @@ def is_truthy(obj: object.Object) -> bool:
         return False
     else:
         return True
+
+
+def new_error(format: str, *arg: Any) -> object.Error:
+    error_message = ""
+    error_message += format
+    for item in arg:
+        error_message += f" {item}"
+    return object.Error(message=f"{error_message}")

@@ -67,3 +67,15 @@ class ReturnValue(Object):
 
     def inspect(self) -> str:
         return self.value.inspect()
+
+
+@dataclass
+class Error(Object):
+    message: str
+
+    @staticmethod
+    def object_type() -> Type:
+        return Type.ERROR_OBJ
+
+    def inspect(self) -> str:
+        return f"ERROR: {self.message}"
