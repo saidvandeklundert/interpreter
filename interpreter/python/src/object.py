@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 ObjectType = str
@@ -79,3 +79,20 @@ class Error(Object):
 
     def inspect(self) -> str:
         return f"ERROR: {self.message}"
+
+
+@dataclass
+class Environment:
+    store: dict[str, Object] = field(default_factory=dict)
+
+    def get(self, name: str) -> None | Object:
+        object = self.store.get(name)
+        return object
+
+    def set(self, name: str, val: Object) -> Object:
+        self.store[name] = val
+        return val
+
+
+def new_environment() -> Environment:
+    return Environment()

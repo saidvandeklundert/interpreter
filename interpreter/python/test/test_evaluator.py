@@ -10,7 +10,8 @@ def eval_helper(source: str) -> object.Object:
     p: Parser = Parser.new(l)
 
     program = p.parse_program()
-    return eval_program(program)
+    env = object.new_environment()
+    return eval_program(program, env)
 
 
 @pytest.mark.parametrize(
@@ -71,10 +72,10 @@ def eval_helper(source: str) -> object.Object:
         ("return 10; 9;", 10),
         ("return 2 * 5; 9;", 10),
         ("9; return 2 * 5; 9;", 10),
-        # ("let a = 5; a;", 5),
-        # ("let a = 5 * 5; a;", 25),
-        # ("let a = 5; let b = a; b;", 5),
-        # ("let a = 5; let b = a; let c = a + b + 5; c;", 15),
+        ("let a = 5; a;", 5),
+        ("let a = 5 * 5; a;", 25),
+        ("let a = 5; let b = a; b;", 5),
+        ("let a = 5; let b = a; let c = a + b + 5; c;", 15),
     ],
 )
 def test_evaluations(source, expected):
@@ -91,6 +92,10 @@ def test_evaluations(source, expected):
 @pytest.mark.parametrize(
     "source, expected_message",
     [
+        (
+            "foobar",
+            "identifier not found: foobar",
+        ),
         (
             """
 if (10 > 1) {

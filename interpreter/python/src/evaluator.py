@@ -15,30 +15,35 @@ FALSE = object.Boolean(value=False)
 NULL = object.Null()
 
 
-def eval(node: ast.Node) -> Any:
+def eval(node: ast.Node, env: object.Environment) -> Any:
     """
     Main eval function to evaluate the ast.Node objects.
     """
     match type(node):
         # statements
         case ast.Program:
-            return eval_statements(node.statements)
+            return eval_statements(node.statements, env)
+        case ast.LetStatement:
+            val = eval(node.value, env)
+            if is_error(val):
+                return val
+            env.set(name=node.name.value, val=val)
 
         # expression
         case ast.ExpressionStatement:
-            return eval(node.expression)
+            return eval(node.expression, env)
         case ast.PrefixExpression:
-            right = eval(node.right)
+            right = eval(node.right, env)
             if is_error(right):
                 return right
             return eval_prefix_expression(node.operator, right)
         case ast.InfixExpression:
-            left = eval(node.left)
+            left = eval(node.left, env)
 
             if is_error(left):
                 return left
 
-            right = eval(node.right)
+            right = eval(node.right, env)
 
             if is_error(right):
                 return right
@@ -48,21 +53,29 @@ def eval(node: ast.Node) -> Any:
         case ast.Boolean:
             return native_bool_to_boolean_object(node.value)
         case ast.BlockStatement:
-            return eval_statements(node.statements)
+            return eval_statements(node.statements, env)
         case ast.IfExpression:
-            return eval_if_expression(node)
+            return eval_if_expression(node, env)
         case ast.ReturnStatement:
-            val = eval(node.return_value)
+            val = eval(node.return_value, env)
             if is_error(val):
                 return val
             return object.ReturnValue(value=val)
+        case ast.Identifier:
+            return eval_identifier(node, env)
     return None
 
 
-def eval_program(program: ast.Program) -> object.Object:
+def eval_program(program: ast.Program, env: object.Environment) -> object.Object:
+    """
+    Main function to evaluate a program.
+
+    Takes in the ast.Program and then feeds all the statements to the 'eval'
+    function, one at a time.
+    """
     result: object.Object
     for statement in program.statements:
-        result = eval(statement)
+        result = eval(statement, env)
         result_type = type(result)
         LOGGER.info(f"result_type: {result_type}")
         # print(f"result_type: {result_type}")
@@ -89,10 +102,12 @@ def eval_blockstatement(block: ast.BlockStatement) -> object.Object:
     return result
 
 
-def eval_statements(statements: list[ast.Statement]) -> object.Object:
+def eval_statements(
+    statements: list[ast.Statement], env: object.Environment
+) -> object.Object:
     result: object.Object
     for statement in statements:
-        result = eval(statement)
+        result = eval(statement, env)
         if type(result) == object.ReturnValue:
             import pdb
 
@@ -202,14 +217,16 @@ def eval_integer_infix_expression(
             )
 
 
-def eval_if_expression(if_expression: ast.IfExpression) -> object.Object:
-    condition = eval(if_expression.condition)
+def eval_if_expression(
+    if_expression: ast.IfExpression, env: object.Environment
+) -> object.Object:
+    condition = eval(if_expression.condition, env)
     if is_error(condition):
         return condition
     if is_truthy(condition):
-        return eval(if_expression.consequence)
+        return eval(if_expression.consequence, env)
     elif if_expression.alternative is not None:
-        return eval(if_expression.alternative)
+        return eval(if_expression.alternative, env)
     else:
         return None
 
@@ -231,3 +248,10 @@ def new_error(format: str, *arg: Any) -> object.Error:
     for item in arg:
         error_message += f" {item}"
     return object.Error(message=f"{error_message}")
+
+
+def eval_identifier(node: ast.Identifier, env: object.Environment) -> object.Object:
+    val = env.get(name=node.value)
+    if not val:
+        return new_error(f"identifier not found: {node.value}")
+    return val
