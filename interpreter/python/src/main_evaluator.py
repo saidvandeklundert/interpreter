@@ -15,15 +15,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 source = """
-if (10 > 1) {
-  if (10 > 1) {
-    return true + false;
-  }
-
-  return 1;
+let add = fn(x, y) { x + y; };
+add(21, 5);
 """
 lexer: Lexer = Lexer.new(source)
 parser: Parser = Parser.new(lexer)
-
+env = object.new_environment()
 program = parser.parse_program()
-eval_program(program)
+eval_program(program, env)

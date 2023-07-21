@@ -1,5 +1,5 @@
 """
-python .\src\main_parser.py
+ipython .\src\main_parser.py
 ipython -i .\src\main_parser.py
 
 """
@@ -24,6 +24,7 @@ false;
 true == true;
 (!(true == true));
 if (x < y) { x };
+let add = fn(x, y) { x + y; }; add(5, 5);
 """
 
 if __name__ == "__main__":

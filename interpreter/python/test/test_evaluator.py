@@ -17,6 +17,14 @@ def eval_helper(source: str) -> object.Object:
 @pytest.mark.parametrize(
     "source, expected",
     [
+        # function application
+        ("let identity = fn(x) { x; }; identity(5);", 5),
+        ("let identity = fn(x) { return x; }; identity(5);", 5),
+        ("let double = fn(x) { x * 2; }; double(5);", 10),
+        ("let add = fn(x, y) { x + y; }; add(5, 5);", 10),
+        ("let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20),
+        ("fn(x) { x; }(5)", 5),
+        # end function application tests
         ("-5", -5),
         ("5", 5),
         ("10", 10),
@@ -72,6 +80,7 @@ def eval_helper(source: str) -> object.Object:
         ("return 10; 9;", 10),
         ("return 2 * 5; 9;", 10),
         ("9; return 2 * 5; 9;", 10),
+        # binding
         ("let a = 5; a;", 5),
         ("let a = 5 * 5; a;", 25),
         ("let a = 5; let b = a; b;", 5),
@@ -86,6 +95,9 @@ def test_evaluations(source, expected):
     if evaluated is None:
         assert evaluated is expected
     else:
+        import pdb
+
+        # pdb.set_trace()
         assert evaluated.value == expected
 
 
@@ -138,3 +150,28 @@ def test_error_handling(source, expected_message):
 
     # pdb.set_trace()
     assert evaluated.message == expected_message
+
+
+def test_function():
+    source = "fn(x) { x + 2; };"
+    evaluated = eval_helper(source)
+    import pdb
+
+    # pdb.set_trace()
+    assert isinstance(evaluated, object.Function)
+    assert evaluated.parameters[0].value == "x", "function parameter not found"
+    assert len(evaluated.parameters) == 1, "incorrect number of parameters found"
+    assert len(evaluated.body.statements) == 1
+    assert evaluated.body.statements[0].expression.operator == "+"
+
+
+def test_closures():
+    source = """
+    let newAdder = fn(x) {
+    fn(y) { x + y };
+    };
+    let addTwo = newAdder(2);
+    addTwo(2);
+    """
+    evaluated = eval_helper(source)
+    assert evaluated.value == 4

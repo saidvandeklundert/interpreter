@@ -63,6 +63,26 @@ def eval(node: ast.Node, env: object.Environment) -> Any:
             return object.ReturnValue(value=val)
         case ast.Identifier:
             return eval_identifier(node, env)
+        case ast.CallExpression:
+            import pdb
+
+            # pdb.set_trace()
+            func = eval(node.function, env)
+            if is_error(func):
+                # pdb.set_trace()
+                return func
+
+            eval_expr_result = eval_expressions(node.arguments, env)
+            # pdb.set_trace()
+            if len(eval_expr_result) == 1 and is_error(eval_expr_result[0]):
+                return eval_expr_result[0]
+
+            return apply_function(func, eval_expr_result)
+        case ast.FunctionLiteral:
+            parameters = node.parameters
+            body = node.body
+            return object.Function(parameters=parameters, env=env, body=body)
+
     return None
 
 
@@ -78,6 +98,7 @@ def eval_program(program: ast.Program, env: object.Environment) -> object.Object
         result = eval(statement, env)
         result_type = type(result)
         LOGGER.info(f"result_type: {result_type}")
+        LOGGER.info(f"result: {result}")
         # print(f"result_type: {result_type}")
         if result_type == object.ReturnValue:
             return result.value
@@ -255,3 +276,55 @@ def eval_identifier(node: ast.Identifier, env: object.Environment) -> object.Obj
     if not val:
         return new_error(f"identifier not found: {node.value}")
     return val
+
+
+def eval_expressions(
+    exps: list[ast.Expression], env: object.Environment
+) -> list[object.Object]:
+    result: list[object.Object] = []
+    import pdb
+
+    # pdb.set_trace()
+    for e in exps:
+        evaluated = eval(e, env)
+        if is_error(evaluated):
+            return [object.Object(evaluated)]
+        result.append(evaluated)
+    return result
+
+
+def apply_function(fn: object.Object, args: list[object.Object]) -> object.Object:
+    LOGGER.info("execuring apply_function")
+    print("execuring apply_function")
+    import pdb
+
+    # pdb.set_trace()
+    func = fn
+    extended_env = extended_function_env(func, args)
+    evaluated = eval(func.body, extended_env)
+    return unwrap_return_value(evaluated)
+
+
+def extended_function_env(
+    func: object.Function, args: list[object.Object]
+) -> object.Environment:
+    import pdb
+
+    # pdb.set_trace()
+    env = object.new_enclosed_environment(func.env)
+    for idx, param in enumerate(func.parameters):
+        env.set(param.value, args[idx])
+
+    return env
+
+
+def unwrap_return_value(obj: object.Object) -> object.Object:
+    import pdb
+
+    # pdb.set_trace()
+    try:
+        return_value = obj.ReturnValue
+        return return_value.value
+    except Exception as err:
+        LOGGER.info(err)
+        return obj

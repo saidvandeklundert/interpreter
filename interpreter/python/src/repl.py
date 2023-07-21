@@ -36,6 +36,7 @@ def parse_line(env: object.Environment):
     if result is not None:
         print(result.inspect())
 
+
 """
 
 >> let a = 5;
@@ -48,7 +49,31 @@ def parse_line(env: object.Environment):
 99
 >> d * c * a;
 245025
+>> let add = fn(a, b, c, d) { return a + b + c + d };
+>> add(1, 2, 3, 4);
+10
+>> let addThree = fn(x) { return x + 3 };
+>> addThree(3);
+6
+>> let max = fn(x, y) { if (x > y) { x } else { y } };
+>> max(5, 10)
+10
+>> let factorial = fn(n) { if (n == 0) { 1 } else { n * factorial(n - 1) } };
+>> factorial(5)
+120
+>> let callTwoTimes = fn(x, func) { func(func(x)) };
+>> callTwoTimes(3, addThree);
+9
+>> callTwoTimes(3, fn(x) { x + 1 });
+5
+>> let newAdder = fn(x) { fn(n) { x + n } };
+>> let addTwo = newAdder(2);
+>> addTwo(2);
+4
+>> let add = fn(x, y) { x + y; }; add(5, 5);
+10
+>> fn(x) { x == 10 }(10)
+True
 """
 if __name__ == "__main__":
     main()
-
