@@ -17,6 +17,11 @@ logging.basicConfig(level=logging.DEBUG)
 source = """
 let add = fn(x, y) { x + y; };
 add(21, 5);
+
+let firstName = "Thorsten";
+let lastName = "Ball";
+let fullName = fn(first, last) { first + " " + last };
+fullName(firstName, lastName);
 """
 lexer: Lexer = Lexer.new(source)
 parser: Parser = Parser.new(lexer)

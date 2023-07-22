@@ -275,3 +275,18 @@ def test_let_statement_values(source, identifier, expected):
     import pdb
 
     # pdb.set_trace()
+
+
+def test_string_literal():
+    source = '"hello world";'
+    l: Lexer = Lexer.new(source)
+    p: Parser = Parser.new(l)
+
+    program = p.parse_program()
+
+    check_parser_error(p)
+
+    assert isinstance(program, Program)
+    assert len(program.statements) == 1
+    statement = program.statements[0]
+    assert statement.expression.value == "hello world"

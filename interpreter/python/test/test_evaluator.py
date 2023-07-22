@@ -105,6 +105,10 @@ def test_evaluations(source, expected):
     "source, expected_message",
     [
         (
+            '"Hello" - "World"',
+            "unknown operator: Type.STRING_OBJ - Type.STRING_OBJ",
+        ),
+        (
             "foobar",
             "identifier not found: foobar",
         ),
@@ -175,3 +179,19 @@ def test_closures():
     """
     evaluated = eval_helper(source)
     assert evaluated.value == 4
+
+
+def test_string_literal():
+    source = """
+    "Hello World!";
+    """
+    evaluated = eval_helper(source)
+    assert evaluated.value == "Hello World!"
+
+
+def test_string_concatenation():
+    source = """
+    "Hello" + " " + "World!";
+    """
+    evaluated = eval_helper(source)
+    assert evaluated.value == "Hello World!"

@@ -25,6 +25,10 @@ true == true;
 (!(true == true));
 if (x < y) { x };
 let add = fn(x, y) { x + y; }; add(5, 5);
+let firstName = "Thorsten";
+let lastName = "Ball";
+let fullName = fn(first, last) { first + " " + last };
+fullName(firstName, lastName);
 """
 
 if __name__ == "__main__":

@@ -37,7 +37,7 @@ def test_next_token():
     """
     Ensure the lexer can translate source code into the proper tokens.
     """
-    source_code = """let five = 5;
+    source_code = '''let five = 5;
 let ten = 10;
 let add = fn(x, y) {
 x + y;
@@ -53,7 +53,9 @@ if (5 < 10) {
 }
 
 10 == 10;
-10 != 9;"""
+10 != 9;
+"foobar"
+"foo bar"'''
 
     expected = [
         (TokenTypes.LET, "let"),
@@ -129,6 +131,8 @@ if (5 < 10) {
         (TokenTypes.NOT_EQ, "!="),
         (TokenTypes.INT, "9"),
         (TokenTypes.SEMICOLON, ";"),
+        (TokenTypes.STRING, "foobar"),
+        (TokenTypes.STRING, "foo bar"),
         (TokenTypes.EOF, None),
     ]
     lexer = Lexer.new(source_code)

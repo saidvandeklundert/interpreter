@@ -46,6 +46,9 @@ class Parser:
         self.register_prefix_function(token.TokenTypes.IDENT, self.parse_identifier)
         self.register_prefix_function(token.TokenTypes.INT, self.parse_integer_literal)
         self.register_prefix_function(
+            token.TokenTypes.STRING, self.parse_string_literal
+        )
+        self.register_prefix_function(
             token.TokenTypes.BANG, self.parse_prefix_expression
         )
         self.register_prefix_function(
@@ -478,3 +481,6 @@ class Parser:
             return None
 
         return arguments
+
+    def parse_string_literal(self) -> ast.Expression:
+        return ast.StringLiteral(token=self.cur_token, value=self.cur_token.Literal)

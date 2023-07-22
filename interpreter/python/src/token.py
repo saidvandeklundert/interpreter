@@ -54,6 +54,8 @@ class TokenTypes(str, Enum):
     IF = "IF"
     ELSE = "ELSE"
     RETURN = "RETURN"
+    # data types
+    STRING = "STRING"
 
 
 KEYWORDS: dict[str, TokenTypes] = {

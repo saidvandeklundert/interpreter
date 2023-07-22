@@ -1,3 +1,4 @@
+
 # Interpreters and compilers
 
 
@@ -70,6 +71,11 @@ The 6 compiler stages:
 - Linker: link all programs (such as modules) together to create a final executable
 - Loader: loads final executable into memory
 
+
+# General concepts:
+Higher-order functions: functions that either return other functions or receive them as arguments.
+
+Closuers: functions that 'close over' the environment they were defined in
 ## Links:
 
 Statements vs expressions:

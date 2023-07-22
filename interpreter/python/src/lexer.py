@@ -114,6 +114,10 @@ class Lexer:
                 tok = Token(TokenTypes.RBRACE.value, self.char)
             case None:
                 tok = Token(TokenTypes.EOF.value, self.char)
+            case '"':
+                string = self.read_string()
+                tok = Token(Type=TokenTypes.STRING, Literal=string)
+
             case _:
                 if self.is_letter(self.char):
                     token_literal = self.read_identifier()
@@ -132,6 +136,19 @@ class Lexer:
 
         while self.char and self.is_letter(self.char):
             self.read_char()
+        return self.input[position : self.position]
+
+    def read_string(self) -> str:
+        """
+        Read a string literal after triggering the following in the lexer:
+         case '"':
+        """
+        position = self.position + 1
+
+        while self.char:
+            self.read_char()
+            if self.char == '"' or self.char == 0:
+                break
         return self.input[position : self.position]
 
     @staticmethod

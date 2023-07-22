@@ -50,6 +50,8 @@ def eval(node: ast.Node, env: object.Environment) -> Any:
             return eval_infix_expression(node.operator, left, right)
         case ast.IntegerLiteral:
             return object.Integer(value=node.value)
+        case ast.StringLiteral:
+            return object.String(value=node.value)
         case ast.Boolean:
             return native_bool_to_boolean_object(node.value)
         case ast.BlockStatement:
@@ -195,10 +197,16 @@ def eval_infix_expression(
         and right.object_type() == object.Type.INTEGER_OBJ
     ):
         return eval_integer_infix_expression(operator, left, right)
+    elif (
+        left.object_type() == object.Type.STRING_OBJ
+        and right.object_type() == object.Type.STRING_OBJ
+    ):
+        return eval_string_infix_expression(operator, left, right)
     elif left.object_type() != right.object_type():
         return new_error(
             f"type mismatch: {left.object_type()} {operator} {right.object_type()}"
         )
+
     elif operator == "==":
         return native_bool_to_boolean_object(left == right)
     elif operator == "!=":
@@ -328,3 +336,13 @@ def unwrap_return_value(obj: object.Object) -> object.Object:
     except Exception as err:
         LOGGER.info(err)
         return obj
+
+
+def eval_string_infix_expression(
+    operator: str, left: object.Object, right: object.Object
+):
+    if operator != "+":
+        return new_error(
+            f"unknown operator: {left.object_type()} {operator} {right.object_type()}"
+        )
+    return object.String(value=left.value + right.value)

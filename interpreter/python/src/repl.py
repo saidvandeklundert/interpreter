@@ -74,6 +74,10 @@ def parse_line(env: object.Environment):
 10
 >> fn(x) { x == 10 }(10)
 True
+>> let firstName = "Thorsten";
+>> let lastName = "Ball";
+>> let fullName = fn(first, last) { first + " " + last };
+>> fullName(firstName, lastName);
 """
 if __name__ == "__main__":
     main()

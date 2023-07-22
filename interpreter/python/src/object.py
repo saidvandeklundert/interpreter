@@ -14,6 +14,7 @@ class Type(Enum):
     RETURN_VALUE_OBJ = "RETURN_VALUE"
     ERROR_OBJ = "ERROR"
     FUNCTION_OBJ = "FUNCTION"
+    STRING_OBJ = "STRING"
 
 
 class Object(ABC):
@@ -37,6 +38,17 @@ class Integer(Object):
     def inspect(self) -> str:
         return str(self.value)
 
+
+@dataclass
+class String(Object):
+    value: str
+
+    @staticmethod
+    def object_type() -> Type:
+        return Type.STRING_OBJ
+
+    def inspect(self) -> str:
+        return str(self.value)
 
 @dataclass
 class Boolean(Object):

@@ -282,3 +282,23 @@ class CallExpression(Expression):
 
     def expression_node(self) -> None:
         pass
+
+
+@dataclass
+class StringLiteral(Expression):
+    """
+    The StringLiteral in the Monkey programming language is
+    an expression and thus we inherit from Expression.
+    """
+
+    # token: Token  inherited from 'Expression' -> 'Node'
+    value: str = ""
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def expression_node(self) -> None:
+        pass
+
+    def __str__(self) -> str:
+        return self.token.Literal
