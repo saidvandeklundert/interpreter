@@ -15,6 +15,13 @@ class Type(Enum):
     ERROR_OBJ = "ERROR"
     FUNCTION_OBJ = "FUNCTION"
     STRING_OBJ = "STRING"
+    BUILTIN_OBJ = "BUILTIN"
+
+
+class BuiltinFunction(ABC):
+    @abstractmethod
+    def func(*args, **kwargs) -> Object:
+        ...
 
 
 class Object(ABC):
@@ -49,6 +56,7 @@ class String(Object):
 
     def inspect(self) -> str:
         return str(self.value)
+
 
 @dataclass
 class Boolean(Object):
@@ -152,3 +160,15 @@ class Function(Object):
         result += "\n}"
 
         return result
+
+
+@dataclass
+class Builtin(Object):
+    fn: BuiltinFunction
+
+    @staticmethod
+    def object_type() -> Type:
+        return Type.BUILTIN_OBJ
+
+    def inspect(self) -> str:
+        return "builtin function"

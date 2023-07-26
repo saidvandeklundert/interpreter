@@ -3,8 +3,10 @@ from src import ast
 from src import lexer
 from src import token
 from src import object
+from src import builtins
 from typing import Any
 import logging
+import pdb
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -281,6 +283,13 @@ def new_error(format: str, *arg: Any) -> object.Error:
 
 def eval_identifier(node: ast.Identifier, env: object.Environment) -> object.Object:
     val = env.get(name=node.value)
+
+    builtin = BUILTINS.get(node.value)
+    # pdb.set_trace()
+    if builtin:
+        # pdb.set_trace()
+        return builtin
+    # return new_error(f"identifier not found: {node.value}")
     if not val:
         return new_error(f"identifier not found: {node.value}")
     return val
@@ -304,10 +313,13 @@ def eval_expressions(
 def apply_function(fn: object.Object, args: list[object.Object]) -> object.Object:
     LOGGER.info("execuring apply_function")
     print("execuring apply_function")
-    import pdb
 
     # pdb.set_trace()
     func = fn
+
+    if type(func) == object.Builtin:
+        # pdb.set_trace()
+        return func.fn(*args)
     extended_env = extended_function_env(func, args)
     evaluated = eval(func.body, extended_env)
     return unwrap_return_value(evaluated)
@@ -346,3 +358,18 @@ def eval_string_infix_expression(
             f"unknown operator: {left.object_type()} {operator} {right.object_type()}"
         )
     return object.String(value=left.value + right.value)
+
+
+def builtin_len(*args):
+    if len(args) != 1:
+        return new_error(f"wrong number of arguments. got = {len(args)}, want = 1")
+    arg_type = type(args[0])
+    if arg_type == object.String:
+        return object.Integer(value=int(len(args[0].value)))
+    else:
+        return new_error(f"argument to 'len' not supported, got {arg_type}")
+
+
+BUILTINS = {
+    "len": object.Builtin(fn=builtin_len),
+}

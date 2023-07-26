@@ -29,6 +29,7 @@ let firstName = "Thorsten";
 let lastName = "Ball";
 let fullName = fn(first, last) { first + " " + last };
 fullName(firstName, lastName);
+len("four")
 """
 
 if __name__ == "__main__":

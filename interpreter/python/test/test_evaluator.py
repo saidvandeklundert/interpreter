@@ -3,6 +3,7 @@ from src.lexer import Lexer
 from src.parser import Parser
 from src.evaluator import eval_program
 from src import object
+import pdb
 
 
 def eval_helper(source: str) -> object.Object:
@@ -17,6 +18,12 @@ def eval_helper(source: str) -> object.Object:
 @pytest.mark.parametrize(
     "source, expected",
     [
+        # builtins
+        ('len("one", "two")', "wrong number of arguments. got = 2, want = 1"),
+        ("len(1)", "argument to 'len' not supported, got <class 'src.object.Integer'>"),
+        ('len("")', 0),
+        ('len("four")', 4),
+        ('len("hello world")', 11),
         # function application
         ("let identity = fn(x) { x; }; identity(5);", 5),
         ("let identity = fn(x) { return x; }; identity(5);", 5),
@@ -95,10 +102,11 @@ def test_evaluations(source, expected):
     if evaluated is None:
         assert evaluated is expected
     else:
-        import pdb
-
         # pdb.set_trace()
-        assert evaluated.value == expected
+        if type(evaluated) == object.Error:
+            assert evaluated.message == expected
+        else:
+            assert evaluated.value == expected
 
 
 @pytest.mark.parametrize(
