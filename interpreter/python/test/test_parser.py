@@ -13,6 +13,7 @@ from src.ast import (
     InfixExpression,
     FunctionLiteral,
 )
+import pdb
 
 PROGRAM = """
 let x = 5;
@@ -290,3 +291,35 @@ def test_string_literal():
     assert len(program.statements) == 1
     statement = program.statements[0]
     assert statement.expression.value == "hello world"
+
+
+def test_array_literal():
+    source = "[1 ,2 * 2, 3 + 3];"
+    l: Lexer = Lexer.new(source)
+    p: Parser = Parser.new(l)
+
+    program = p.parse_program()
+
+    check_parser_error(p)
+
+    assert isinstance(program, Program)
+    assert len(program.statements) == 1
+    statement = program.statements[0]
+
+    # pdb.set_trace()
+    array = statement.expression
+    assert len(array.elements) == 3
+    assert array.elements[0].value == 1
+    assert array.elements[2].left.value == 3
+    assert array.elements[2].right.value == 3
+
+
+def test_parsing_index_expression():
+    source = "myArray[1 + 1]"
+    l: Lexer = Lexer.new(source)
+    p: Parser = Parser.new(l)
+
+    program = p.parse_program()
+    statement = program.statements[0]
+    # pdb.set_trace()
+    assert statement.token.Literal == "myArray"

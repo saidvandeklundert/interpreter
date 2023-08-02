@@ -45,6 +45,8 @@ class TokenTypes(str, Enum):
     RPAREN = ")"
     LBRACE = "}"
     RBRACE = "{"
+    LBRACKET = "["
+    RBRACKET = "]"
 
     # keywords
     FUNCTION = "FUNCTION"

@@ -112,6 +112,10 @@ class Lexer:
                 tok = Token(TokenTypes.LBRACE.value, self.char)
             case "}":
                 tok = Token(TokenTypes.RBRACE.value, self.char)
+            case "[":
+                tok = Token(TokenTypes.LBRACKET.value, self.char)
+            case "]":
+                tok = Token(TokenTypes.RBRACKET.value, self.char)
             case None:
                 tok = Token(TokenTypes.EOF.value, self.char)
             case '"':

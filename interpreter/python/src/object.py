@@ -16,6 +16,7 @@ class Type(Enum):
     FUNCTION_OBJ = "FUNCTION"
     STRING_OBJ = "STRING"
     BUILTIN_OBJ = "BUILTIN"
+    ARRAY_OBJ = "ARRAY"
 
 
 class BuiltinFunction(ABC):
@@ -172,3 +173,19 @@ class Builtin(Object):
 
     def inspect(self) -> str:
         return "builtin function"
+
+
+@dataclass
+class Array(Object):
+    elements: list[Object] = field(default_factory=list)
+
+    @staticmethod
+    def object_type() -> Type:
+        return Type.ARRAY_OBJ
+
+    def inspect(self) -> str:
+        result = "["
+        for item in self.elements:
+            result += f"{item},\n"
+        result += "]"
+        return result

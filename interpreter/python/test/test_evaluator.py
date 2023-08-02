@@ -18,6 +18,11 @@ def eval_helper(source: str) -> object.Object:
 @pytest.mark.parametrize(
     "source, expected",
     [
+        # array
+        ("[1, 2, 3][0]", 1),
+        ("[1, 2, 3][1]", 2),
+        ("[1, 2, 3][2]", 3),
+        ("let myArray = [1, 2, 3]; myArray[2];", 3),
         # builtins
         ('len("one", "two")', "wrong number of arguments. got = 2, want = 1"),
         ("len(1)", "argument to 'len' not supported, got <class 'src.object.Integer'>"),
@@ -203,3 +208,14 @@ def test_string_concatenation():
     """
     evaluated = eval_helper(source)
     assert evaluated.value == "Hello World!"
+
+
+def test_array():
+    source = """
+    [1, 2 * 2, 3 + 3]
+    """
+    evaluated = eval_helper(source)
+    # pdb.set_trace()
+    assert evaluated.elements[0].value == 1
+    assert evaluated.elements[1].value == 4
+    assert evaluated.elements[2].value == 6

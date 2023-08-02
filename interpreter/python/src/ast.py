@@ -302,3 +302,39 @@ class StringLiteral(Expression):
 
     def __str__(self) -> str:
         return self.token.Literal
+
+
+@dataclass
+class ArrayLiteral(Expression):
+    """
+    The ArrayLiteral in the Monkey programming language is
+    an expression and thus we inherit from Expression.
+    """
+
+    # token: Token  inherited from 'Expression' -> 'Node'
+    elements: list[Expression] = field(default_factory=[])
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def expression_node(self) -> None:
+        pass
+
+    def __str__(self) -> str:
+        return self.elements
+
+
+@dataclass
+class IndexExpression(Expression):
+    # token: Token  inherited from 'Expression' -> 'Node'
+    left: Expression | None = None
+    index: Expression | None = None
+
+    def expression_node():
+        pass
+
+    def token_literal(self) -> str:
+        return self.token.Literal
+
+    def __str__(self) -> str:
+        return f"({self.left} [{self.index}])"

@@ -86,6 +86,20 @@ def eval(node: ast.Node, env: object.Environment) -> Any:
             parameters = node.parameters
             body = node.body
             return object.Function(parameters=parameters, env=env, body=body)
+        case ast.ArrayLiteral:
+            elements = eval_expressions(node.elements, env)
+            if len(elements) == 1 and is_error(elements[0]):
+                return elements[0]
+            return object.Array(elements=elements)
+        case ast.IndexExpression:
+            left = eval(node.left, env)
+            if is_error(left):
+                return left
+            index = eval(node.index, env)
+            if is_error(index):
+                return index
+
+            return eval_index_expression(left, index)
 
     return None
 
@@ -366,8 +380,31 @@ def builtin_len(*args):
     arg_type = type(args[0])
     if arg_type == object.String:
         return object.Integer(value=int(len(args[0].value)))
+    elif arg_type == object.Array:
+        return object.Integer(value=int(len(args[0].elements)))
     else:
         return new_error(f"argument to 'len' not supported, got {arg_type}")
+
+
+def eval_index_expression(left: object.Object, index: object.Object) -> object.Object:
+    if (
+        left.object_type() == object.Type.ARRAY_OBJ
+        and index.object_type() == object.Type.INTEGER_OBJ
+    ):
+        return eval_array_index_expression(left, index)
+    else:
+        return new_error(f"index operator not supported for {left.object_type()}")
+
+
+def eval_array_index_expression(
+    array: object.Object, index: object.Object
+) -> object.Object | None:
+    # pdb.set_trace()
+
+    array_length = len(array.elements)
+    if index.value < 0 or index.value > array_length:
+        return None
+    return array.elements[index.value]
 
 
 BUILTINS = {

@@ -21,6 +21,7 @@ class Precedence(IntEnum):
     PRODUCT = 5  # *
     PREFIX = 6  # -X or !X
     CALL = 7  # myFunction(X)
+    INDEX = 8  # array[index]
 
 
 PRECEDENCES: dict[token.TokenTypes, int] = {
@@ -33,6 +34,7 @@ PRECEDENCES: dict[token.TokenTypes, int] = {
     token.TokenTypes.SLASH: Precedence.PRODUCT,
     token.TokenTypes.ASTERISK: Precedence.PRODUCT,
     token.TokenTypes.LPAREN: Precedence.CALL,
+    token.TokenTypes.LBRACKET: Precedence.INDEX,
 }
 
 
@@ -63,6 +65,9 @@ class Parser:
         self.register_prefix_function(
             token.TokenTypes.FUNCTION, self.parse_function_literal
         )
+        self.register_prefix_function(
+            token.TokenTypes.LBRACKET, self.parse_array_literal
+        )
         # register infix operators
         self.infix_parse_function: dict[str, InfixParseFunction] = {}
         self.register_infix_function(token.TokenTypes.PLUS, self.parse_infix_expression)
@@ -83,6 +88,9 @@ class Parser:
         self.register_infix_function(token.TokenTypes.GT, self.parse_infix_expression)
         self.register_infix_function(
             token.TokenTypes.LPAREN, self.parse_call_expression
+        )
+        self.register_infix_function(
+            token.TokenTypes.LBRACKET, self.parse_index_expression
         )
 
     @staticmethod
@@ -459,7 +467,7 @@ class Parser:
 
     def parse_call_expression(self, function: ast.Expression) -> ast.Expression:
         expression = ast.CallExpression(token=self.cur_token, function=function)
-        expression.arguments = self.parse_call_arguments()
+        expression.arguments = self.parse_expression_list(token.TokenTypes.RPAREN)
         return expression
 
     def parse_call_arguments(self) -> list[ast.Expression]:
@@ -484,3 +492,41 @@ class Parser:
 
     def parse_string_literal(self) -> ast.Expression:
         return ast.StringLiteral(token=self.cur_token, value=self.cur_token.Literal)
+
+    def parse_array_literal(self) -> ast.Expression:
+        array = ast.ArrayLiteral(token=self.cur_token, elements=[])
+        array.elements = self.parse_expression_list(token.TokenTypes.RBRACKET)
+        return array
+
+    def parse_expression_list(
+        self, end: token.TokenTypes
+    ) -> list[ast.Expression] | None:
+        ret_list: list[ast.Expression] = []
+
+        if self.peek_token_is(end):
+            self.next_token()
+            return ret_list
+
+        self.next_token()
+        ret_list.append(self.parse_expression(precedence=Precedence.LOWEST))
+
+        while self.peek_token_is(token.TokenTypes.COMMA):
+            self.next_token()
+            self.next_token()
+            ret_list.append(self.parse_expression(precedence=Precedence.LOWEST))
+
+        if not self.expect_peek(end):
+            return None
+
+        return ret_list
+
+    def parse_index_expression(self, left: ast.Expression) -> ast.Expression | None:
+        exp = ast.IndexExpression(token=self.cur_token, left=left)
+
+        self.next_token()
+
+        exp.index = self.parse_expression(Precedence.LOWEST)
+
+        if not self.expect_peek(token.TokenTypes.RBRACKET):
+            return None
+        return exp
