@@ -31,3 +31,6 @@ private
 *.exe
 *.so
 *.o
+*.exe
+*.pdb
+.vscode

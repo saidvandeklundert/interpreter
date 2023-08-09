@@ -47,6 +47,22 @@ Interpreted languages can be optimized. Some examples:
 - compiling the AST to bytecode so that a virtual machine can execute the program more efficiently
 - JIT compiling certain parts of the application to machine code
 
+## Byte-code interpreter:
+
+Compiles source code to bytecode which is then executed by a VM. If the VM is written in a portable language (like C for instance), the advantage is you can run your code on all machines that run that language. Another advantage is that this approach is several times faster when compared to a tree-walking interpreter. In a tree-walking interpreter, each piece of syntax becomes an AST node. Even for simple statements, a lot of objects with pointers and headers are created. This overhead can be reduced by compiling to byte-code.
+
+Compiling to machine code would be even faster. The downside is that every CPU architecture has its own assebly dialect. Getting your language to run on all CPUs is a massive undertaking. A way around this would be using something like LLVM, where you comile to an IR and then let the LLVM backend do the rest.
+
+Bytecode kind of resembles machine code. It forms a dense, linear sequence of binary instructions. Though not as fast as machine code, the instructions are a lot easier to write and maintain.
+
+The VM that executes the bytecode is like a virtual machine that has a simulated chip whose machine code is the byte instructions that are executed. The 'VM' is the interpreter.
+
+Some example languages are Python, Ruby, Lua, OCaml, Erlang and more.
+
+In a byte-code interpreter, we have:
+- a front end compiler that turns source code into byte code
+- byte code being the representation of the program
+- a VM that executes the byte-code
 
 ## Compiler:
 
