@@ -14,6 +14,7 @@ int main(int argc, const char* argv[]) {
     writeChunk(&chunk, constant,123);
     writeChunk(&chunk, OP_RETURN,123);
     disassembleChunk(&chunk, "test chunk");
+    interpret(&chunk);
     freeVM();
     freeChunk(&chunk);
     printf("main comes to an end!\n\n");
