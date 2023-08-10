@@ -13,4 +13,5 @@ zig cc -o main.exe main.c ;
 On Linux:
 ```
 gcc -o main *.c
+./main
 ```
