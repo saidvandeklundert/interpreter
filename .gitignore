@@ -34,3 +34,4 @@ private
 *.exe
 *.pdb
 .vscode
+main
